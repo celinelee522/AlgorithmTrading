@@ -2,6 +2,14 @@
 import pandas as pd
 from math import log10
 
+
+# time consuming
+def checkExist(date, corpName) :
+    for list in dateDic[date] :
+        if list[0] == corpName :
+            return True
+    return False
+
 in_file = open('seryung1.txt', 'r')
 
 #finance_dict = {"date":{}, "corpName":{}, "cshoc":{}, "prccd" :{}}
@@ -36,19 +44,21 @@ for row in in_file:
     	pass
 
     elif (len(row) == 4) and (row[0] != 'datadate') and (row[2] != '') and (row[3] != '') : # for irregular data
-        stock.append(row[0]) 
-        stock.append(row[1]) 
+        stock.append(row[0]) # date
+        date = row[0]
+        stock.append(row[1])  # company name
+        corpName = row[1]
         row[2] = int(float(row[2])) # share of outstanding
         row[3] = int(float(row[3])) # share price
         if (row[2]*row[3] > 0):
-            stock.append(log10(row[2]*row[3])) # ln(market capitalization)
+            marketCap = round( log10(row[2]*row[3]), 2 )
+            stock.append(marketCap) # ln(market capitalization)
         # stock = [Date, Corp name, ln(market cap)]
 
-            if stock[0] in dateDic :
-                stock.append('exist')
-                dateDic[stock[0]].append(stock[1:])
-            else :
-                stock.append('create')
+            if stock[0] in dateDic : # date already exists as a key
+                    dateDic[stock[0]].append(stock[1:])
+            else : # date doesn't exist so you have to add one
+                dateDic[stock[0]] = []
                 dateDic[stock[0]].append(stock[1:])
 
 
@@ -119,3 +129,5 @@ in_file.close()
 
 #finance_df = pd.DataFrame({"gvkey": finance_dict["gvkey"], "prccd":finance_dict["prccd"]})
 # pd.DataFrame.from_dict()
+
+
