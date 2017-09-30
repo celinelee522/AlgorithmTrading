@@ -10,6 +10,19 @@ def checkExist(date, corpName) :
             return True
     return False
 
+def findDateAndStore(date, corpName) : # should return log(mark cap)
+    if date in dateDic :
+        for list in dateDic[date] :
+            if list[0] == corpName :
+                return list[1]
+
+def computeGrowth(base, yearsLater):
+    if yearsLater != None :
+        return (yearsLater/base - 1) * 100
+    else :
+        return 0
+
+
 in_file = open('seryung1.txt', 'r')
 
 #finance_dict = {"date":{}, "corpName":{}, "cshoc":{}, "prccd" :{}}
@@ -17,7 +30,6 @@ in_file = open('seryung1.txt', 'r')
 
 id = 0
 
-stocksList = []
 labels = []
 
 firstLine = in_file.readline()
@@ -60,6 +72,32 @@ for row in in_file:
             else : # date doesn't exist so you have to add one
                 dateDic[stock[0]] = []
                 dateDic[stock[0]].append(stock[1:])
+# finished making up dictionary(key == date). 
+# values inside key are bunch of lists [corpName, log(market Cap)]
+
+for key in dateDic : 
+    for list in dateDic[key] :
+        corpName = list[0]
+        marketCap = list[1]
+        oneYearLater = int(key) + 10000
+        twoYearLater = int(key) + 20000
+        threeYearLater = int(key) + 30000
+
+        oneYMarCap = findDateAndStore(oneYearLater, corpName)
+        list.append(oneYMarCap)
+        list.append(int(computeGrowth(marketCap, oneYMarCap)))
+
+        twoYMarCap = findDateAndStore(twoYearLater, corpName)
+        list.append(twoYMarCap)
+        list.append(int(computeGrowth(marketCap, twoYearLater)))
+
+        threeYMarCap = findDateAndStore(twoYearLater, corpName)
+        list.append(threeYMarCap)
+        list.append(int(computeGrowth(marketCap, threeYMarCap)))
+
+
+
+
 
 
         """
@@ -87,8 +125,10 @@ f = open("newStockList.txt", 'w')
 for date in dateDic:
 	f.write(date + "\n")
 	for item in dateDic[date] :
-	    f.write("		%s\n" % item)
-	f.write("\n")
+	    f.write('{:30}'.format(item[0]) + '{:10.2f}'.format(item[1]) + "\n") #compName, marketCapitalization
+        f.write('{:7.2f}'.format(float(item[2])) + '(' + '{:2}'.format(item[3]) + ')') # oneYearAfter, growthRate
+        f.write('{:7.2f}'.formate(float(item[4])) + '(' + '{:2}'.format(item[5]) + ')')
+        f.write('{:7.2f}'.formate(float(item[7])) + '(' + '{:2}'.format(item[8]) + ')' + "\n")
 f.close()
 
 
