@@ -10,11 +10,14 @@ def checkExist(date, corpName) :
             return True
     return False
 
-def findDateAndStore(date, corpName) : # should return log(mark cap)
-    if date in dateDic :
+def findMarketCap(date, corpName) : # should return log(mark cap)
+    print("date : %s, corpName : %s" % (date, corpName) )
+    if date in dateDic and date < 20170000 :
         for list in dateDic[date] :
             if list[0] == corpName :
+            	print("list[1] : %s" %list[1])
                 return list[1]
+
 
 def computeGrowth(base, yearsLater):
     if yearsLater != None :
@@ -68,12 +71,15 @@ for row in in_file:
         # stock = [Date, Corp name, ln(market cap)]
 
             if stock[0] in dateDic : # date already exists as a key
-                    dateDic[stock[0]].append(stock[1:])
+                dateDic[stock[0]].append(stock[1:])
             else : # date doesn't exist so you have to add one
                 dateDic[stock[0]] = []
                 dateDic[stock[0]].append(stock[1:])
 # finished making up dictionary(key == date). 
 # values inside key are bunch of lists [corpName, log(market Cap)]
+
+
+sorted(dateDic.keys())
 
 for key in dateDic : 
     for list in dateDic[key] :
@@ -83,19 +89,21 @@ for key in dateDic :
         twoYearLater = int(key) + 20000
         threeYearLater = int(key) + 30000
 
-        oneYMarCap = findDateAndStore(oneYearLater, corpName)
+        oneYMarCap = findMarketCap(oneYearLater, corpName)
         list.append(oneYMarCap)
-        list.append(int(computeGrowth(marketCap, oneYMarCap)))
+        print("one year market capitalization : %s " % oneYMarCap)
+        list.append(int(computeGrowth(marketCap, oneYMarCap))) #growthRate
+        print("compute Growth : %s " % computeGrowth)
 
-        twoYMarCap = findDateAndStore(twoYearLater, corpName)
+        twoYMarCap = findMarketCap(twoYearLater, corpName)
         list.append(twoYMarCap)
-        list.append(int(computeGrowth(marketCap, twoYearLater)))
+        list.append(int(computeGrowth(marketCap, twoYearLater))) #growthRate
 
-        threeYMarCap = findDateAndStore(twoYearLater, corpName)
+        threeYMarCap = findMarketCap(twoYearLater, corpName)
         list.append(threeYMarCap)
-        list.append(int(computeGrowth(marketCap, threeYMarCap)))
+        list.append(int(computeGrowth(marketCap, threeYMarCap))) #growthRate
 
-
+# list structure => [corpName, marketCap, log(1yAfter), growth, log(2y), ]
 
 
 
@@ -120,17 +128,19 @@ for list in stock :
         dateDic[list[0]] = list[1:]
 """
 
-sorted(dateDic.keys())
+
+
+
 f = open("newStockList.txt", 'w')
 for date in dateDic:
-	f.write(date + "\n")
-	for item in dateDic[date] :
-	    f.write('{:30}'.format(item[0]) + '{:10.2f}'.format(item[1]) + "\n") #compName, marketCapitalization
-        f.write('{:7.2f}'.format(float(item[2])) + '(' + '{:2}'.format(item[3]) + ')') # oneYearAfter, growthRate
-        f.write('{:7.2f}'.formate(float(item[4])) + '(' + '{:2}'.format(item[5]) + ')')
-        f.write('{:7.2f}'.formate(float(item[7])) + '(' + '{:2}'.format(item[8]) + ')' + "\n")
+    f.write(date + "\n")
+    for item in dateDic[date] :
+        if (type(item[2]) == float and type(item[4]) == float and type(item[6]) == float ) :
+            f.write('{:30}'.format(item[0]) + '{:10.2f}'.format(item[1]) + "\n") #compName, marketCapitalization
+            f.write('{:7.2f}'.format(float(item[2])) + '(' + '{:2}'.format(item[3]) + ')') # oneYearAfter, growthRate
+            f.write('{:7.2f}'.format(float(item[4])) + '(' + '{:2}'.format(item[5]) + ')')
+            f.write('{:7.2f}'.format(float(item[6])) + '(' + '{:2}'.format(item[7]) + ')' + "\n")
 f.close()
-
 
 
 """
@@ -147,7 +157,7 @@ for record in stocksList :
         date.append(record[1:])    	
 
     print(date)
-"""
+
 
 
 
@@ -171,3 +181,4 @@ in_file.close()
 # pd.DataFrame.from_dict()
 
 
+"""
