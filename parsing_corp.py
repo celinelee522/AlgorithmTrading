@@ -4,12 +4,6 @@ from math import log10
 
 
 # time consuming
-def checkExist(date, corpName) :
-    for list in dateDic[date] :
-        if list[0] == corpName :
-            return True
-    return False
-
 def findDate(date, corpName) : # should return log(mark cap)
     date = int(date)
 
@@ -111,7 +105,7 @@ for company in companies :
 
             sorted(companies.keys())
             
-            f.write('{:10}'.format(list[0]) + '{:10.2f}'.format(list[1])) #date, marketCapitalization
+            f.write('{:10}'.format(list[0]) + '{:10.2f}  '.format(list[1])) #date, marketCapitalization
             #if (list[2] is not None and list[3] is not None and list[4] is not None and list[5] is not None and list[6] is not None and list[7] is not None) :
             for i in range(1,4) :
                 i = 2*i
